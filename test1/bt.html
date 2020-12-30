@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8">
+		<title></title>
+		<link rel="stylesheet" type="text/css" href="css/bootstrap.css" />
+		<script type="text/javascript" src="js/jquery-2.1.0.js"></script>
+	</head>
+	<body>
+		<!-- 	"forecast":[{"date":"30鏃ユ槦鏈熶笁","high":"楂樻俯 -5鈩�","fengli":"<![CDATA[3绾]>","low":"浣庢俯 -12鈩�","fengxiang":"瑗垮寳椋�","type":"鏅�"}
+     日期  高温  低温  风力  风向  天气  城市
+	 城市  日期 天气 高温  低温  风力 风向 -->
+		<div class="container">
+			<br>
+			<br>
+			<br>
+			<!-- onsubmit屏蔽form -->
+			<form class="form-inline" onsubmit="return popfalse()">
+				<div class="form-group">
+					<label for="city"></label>
+					<input type="text" class="form-control" id="city" placeholder="请输入要查询的城市名称">
+				</div>
+				<button class="btn btn-info" onclick="search()">查询</button>
+			</form>
+			<!-- <input class="form-control" type="text"  id="city" placeholder="请输入要查询的城市名称" /> -->
+			<br>
+			<hr>
+			<table class="table table-striped table-bordered table-hover">
+				<tr>
+					<th>城市</th>
+					<th>日期</th>
+					<th>天气</th>
+					<th>高温</th>
+					<th>低温</th>
+					<th>风力</th>
+					<th>风向</th>
+				</tr>
+
+				<tbody id="tb">
+
+				</tbody>
+
+			</table>
+		</div>
+		<script type="text/javascript">
+			function popfalse() {
+				return false;
+			}
+
+			function search() {
+				var city = document.getElementById("city").value;
+				$.ajax({
+					type: "GET",//GET请求参数可以通过url路径传递，POST建议用date传值
+					url: "http://wthrcdn.etouch.cn/weather_mini?ak=1233124124&city=" + city,
+					//data:"page="+page+"&count=20",
+					success: function(data) {
+						//alert(data); //后台程序决定data是对象还是字符串
+
+						var jasonObj = JSON.parse(data);
+
+						var cityName = jasonObj.data.city;
+						var forecast = jasonObj.data.forecast;
+
+						var tb = $("#tb"); //jquery查找元素标签
+
+						tb.html("");
+
+						for (var index = 0; index < forecast.length; index++) {
+
+							var wea = forecast[index];
+
+							var str = "<tr>" +
+								"<td>" + cityName + "</td>" +
+								"<td>" + wea.date + "</td>" +
+								"<td>" + wea.type + "</td>" +
+								"<td>" + wea.high + "</td>" +
+								"<td>" + wea.low + "</td>" +
+								"<td>" + wea.fengli + "</td>" +
+								"<td>" + wea.fengxiang + "</td>" +
+								"</tr>";
+
+							tb.append(str);
+						}
+					}
+				});
+			}
+		</script>
+	</body>
+</html>
